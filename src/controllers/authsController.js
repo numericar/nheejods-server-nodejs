@@ -2,7 +2,7 @@ const BaseResponseDto = require('../dtos/BaseResponseDto');
 const userService = require('../services/userService');
 const bcrypt = require('bcrypt');
 
-const BaseController = require("./BaseController");
+const BaseController = require("./baseController");
 
 class AuthsController extends BaseController {
     async register(req, res) {
