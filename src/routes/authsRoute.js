@@ -1,7 +1,7 @@
 const express = require('express');
 
 // get controller
-const authsController = require('../controllers/authsController');
+const authsController = require('../controllers/AuthsController');
 
 // initialize router
 const routers = express.Router();

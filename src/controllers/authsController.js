@@ -1,9 +1,6 @@
-const BaseResponseDto = require("../dtos/BaseResponseDto");
+const BaseController = require("./BaseController");
 
-function healthCheck(req, res) {
-    return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
+class AuthsController extends BaseController {
 }
 
-module.exports = {
-    healthCheck
-}
+module.exports = new AuthsController();
