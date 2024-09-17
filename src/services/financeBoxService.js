@@ -30,7 +30,22 @@ class FinanceBoxService {
     }
 
     async findFinanceBoxByUserIdAndDateAsync(userId, startDateObject, endDateObject) {
+        try {
+            if (typeof userId != 'number' && typeof year != 'number' && typeof month != 'number') throw new Error('Data for create finance box is invalid');
 
+            const query = `SELECT fb.user_id, fb.year, fb.month FROM finance_boxs fb WHERE 
+                           fb.user_id = ? AND 
+                           fb.year >= ? AND 
+                           fb.month >= ? AND
+                           fb.year <= ? AND 
+                           fb.month <= ?`;
+            const values = [userId, startDateObject.year, startDateObject.month, endDateObject.year, endDateObject.month];
+            const financeBoxs = await dbContext.executeAsync(query, values);
+
+            return financeBoxs;
+        } catch (ex) {
+            throw ex;
+        }
     }
 }
 

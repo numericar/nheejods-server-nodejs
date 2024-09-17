@@ -32,10 +32,12 @@ class FinanceBoxController extends BaseController {
             return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
         }
     }
-
+    
     async getFinanceBoxs(req, res) {
         try {
             const { start, end } = req.query;
+            const { userId } = req.user;
+
             if (typeof start != 'string' && typeof end != 'string') return res.status(400).json(new BaseResponseDto(false, 'Date is invalid', null));
 
             const tempStart = start.trim();
@@ -57,9 +59,12 @@ class FinanceBoxController extends BaseController {
             if (startDateObject.year > endDateObject.year) return res.status(400).json(new BaseResponseDto(false, 'Start date sould less than end date', null));
 
             // get user finance box
+            const financeBoxs = await financeBoxService.findFinanceBoxByUserIdAndDateAsync(userId, startDateObject, endDateObject);
+
+            // get finance summary
             
             // return information to client
-            return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
+            return res.status(200).json(new BaseResponseDto(true, 'Successful', financeBoxs));
         } catch (ex) {
             console.log(ex.message);
 
