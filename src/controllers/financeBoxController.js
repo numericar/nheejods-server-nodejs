@@ -19,9 +19,6 @@ class FinanceBoxController extends BaseController {
             const startIsValidFormat = dateUtilService.isFormatYYYYMM(tempStart);
             const endIsValidFormat = dateUtilService.isFormatYYYYMM(tempEnd);
             if (!(startIsValidFormat && endIsValidFormat)) return res.status(400).json(new BaseResponseDto(false, 'Date is invalid format, format should be YYYY-MM', null));
-            
-            console.log(startIsValidFormat);
-            console.log(endIsValidFormat);
 
             // parse string date to object, in object shold be like { year, month }
             const startDateObject = dateUtilService.parseStringDateToObject(tempStart);
@@ -31,11 +28,8 @@ class FinanceBoxController extends BaseController {
             if (startDateObject.year > endDateObject.year) return res.status(400).json(new BaseResponseDto(false, 'Start date sould less than end date', null));
 
             // get user finance box
-
-            console.log(start);
-            console.log(end);
-            console.log(req.user);
             
+            // return information to client
             return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
         } catch (ex) {
             console.log(ex.message);
