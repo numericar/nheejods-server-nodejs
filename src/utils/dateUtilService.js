@@ -17,30 +17,39 @@ class DateUtilService {
                 isOnlyNumber = false;
             }
 
+            // validate current count is equal YEAR_COUNT and has only number
             if ((index + 1) == YEAR_COUNT && isOnlyNumber) {
-                let nextChanacter = stringDate[index + 1];
-                if (nextChanacter == '-') {
-                    foundYear = true;
+                let nextChanacter = stringDate[index + 1]; // get next character
+                if (nextChanacter == '-') { // if next character is equal dash, all number before it is year !
+                    foundYear = true; // true if found year number
                     continue;
                 }
             }
 
+            // validate current character is dash
             if (character == '-') {
-                foundDash = true;
+                foundDash = true; // true if found year dash
                 continue;
             }
 
+            // validate after found it dash amd isOnlyNumber  is true
             if (foundDash && isOnlyNumber) {
-                foundMonth = true;
+                foundMonth = true; // true if foundDash and isOnlyNumber
                 continue;
             }
         }
 
+        // if we found year, dash, month it should true (correct format)
         return (foundYear && foundDash && foundMonth);        
     }
 
     parseStringDateToObject(stringDate) {
+        const dateArr = stringDate.split(',');
 
+        return {
+            year: dateArr[0],
+            month: dateArr[1]
+        }
     }
 }
 
