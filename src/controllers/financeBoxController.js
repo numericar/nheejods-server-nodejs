@@ -32,6 +32,32 @@ class FinanceBoxController extends BaseController {
             return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
         }
     }
+
+    async updateFinanceItems(req, res) {
+        try {
+            const { appends, updates, removes } = req.body;
+            const { financeBoxId } = req.params;
+
+            if (!Array.isArray(appends) || !Array.isArray(removes) || typeof financeBoxId != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
+
+            console.log(financeBoxId);
+            console.log(appends);
+            console.log(updates);
+            console.log(removes);
+
+            // appends
+
+            // updates
+
+            // removes
+
+            return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
+        } catch (ex) {
+            console.log(ex.message);
+
+            return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
+        }
+    }
     
     async getFinanceBoxs(req, res) {
         try {
