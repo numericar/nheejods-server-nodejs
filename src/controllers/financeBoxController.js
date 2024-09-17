@@ -46,10 +46,19 @@ class FinanceBoxController extends BaseController {
             console.log(removes);
 
             // appends
+            for (let i = 0; i < appends.length; i++) {
+
+            }
 
             // updates
+            for (let i = 0; i < updates.length; i++) {
+                
+            }
 
             // removes
+            for (let i = 0; i < removes.length; i++) {
+                
+            }
 
             return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
         } catch (ex) {
