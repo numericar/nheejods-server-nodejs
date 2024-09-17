@@ -12,13 +12,12 @@ function useAuthentication (req, res, next) {
         }
 
         const secretKey = process.env.JWT_KEY;
-        console.log(secretKey)
         if (typeof secretKey == 'undefined' || secretKey == null) throw new Error('JWT Secret key not initialize');
 
         const payload = jwt.verify(token, secretKey);
 
         req.user = {
-            id: payload.id
+            userId: payload.id
         };
 
         return next();

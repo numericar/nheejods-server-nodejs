@@ -1,9 +1,38 @@
 const BaseResponseDto = require("../dtos/BaseResponseDto");
 const BaseController = require("./baseController");
 
+const financeBoxService = require('../services/financeBoxService');
 const dateUtilService = require('../utils/dateUtilService');
 
 class FinanceBoxController extends BaseController {
+    async createFinanceBox(req, res) {
+        try {
+            const { year, month } = req.body;
+        const { userId } =  req.user;
+
+        if (typeof year != 'number' || typeof month != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
+
+        // validate year should more than 1970
+        if (year < 1970) return res.status(400).json(new BaseResponseDto(false, 'Year should be more than 1970', null));
+
+        // validate month should between 1 - 12
+        if (month < 1 || month > 12) return res.status(400).json(new BaseResponseDto(false, 'Month should be between 1 - 12', null));
+
+        // validate finance box is exists
+        const isExists = await financeBoxService.financeBoxIsExists(userId, year, month);
+        if (isExists) return res.status(500).json(new BaseResponseDto(false, 'Finance box aleady exists', null));
+
+        // create finance box
+        await financeBoxService.createFinanceBoxAsync(userId, year, month);
+
+        return res.status(201).json(new BaseResponseDto(true, 'Successful', null));
+        } catch (ex) {
+            console.log(ex.message);
+
+            return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
+        }
+    }
+
     async getFinanceBoxs(req, res) {
         try {
             const { start, end } = req.query;
