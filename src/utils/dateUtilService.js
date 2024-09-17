@@ -44,11 +44,11 @@ class DateUtilService {
     }
 
     parseStringDateToObject(stringDate) {
-        const dateArr = stringDate.split(',');
+        const dateArr = stringDate.split('-');
 
         return {
-            year: dateArr[0],
-            month: dateArr[1]
+            year: Number(dateArr[0]),
+            month: Number(dateArr[1])
         }
     }
 }
