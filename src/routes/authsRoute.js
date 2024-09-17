@@ -8,6 +8,7 @@ const routers = express.Router();
 
 // add route to controller function
 routers.post('/register', authsController.register);
+routers.post('/login', authsController.login);
 routers.get('/health-check', authsController.healthCheck);
 
 module.exports = routers;
