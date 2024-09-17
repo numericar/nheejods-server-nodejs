@@ -7,6 +7,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(require('./src/middlewares/useAuthentication'));
+
+// map to controllers
 app.use(require('./src/middlewares/useMapController'));
 
 const PORT = 3000;
