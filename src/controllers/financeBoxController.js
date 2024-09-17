@@ -45,6 +45,10 @@ class FinanceBoxController extends BaseController {
             console.log(updates);
             console.log(removes);
 
+            // validate finance box is exists
+
+            // validate request user is owner of finance box
+
             // appends
             for (let i = 0; i < appends.length; i++) {
 
