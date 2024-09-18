@@ -17,6 +17,20 @@ class FinanceItemService {
         }
     }
 
+    async updateFinanceItemByIdAsync(financeItemId, title, amount) {
+        try {
+            if (typeof financeItemId != 'number' || typeof title != 'string' || typeof amount != 'number') throw new Error('Data update finance item is invalid');
+
+            const currentDateTime = new Date();
+
+            const query = 'UPDATE finance_items fi SET fi.title = ?, fi.amount = ?, fi.updated_at = ? WHERE fi.id = ?';
+            const values = [title, amount, currentDateTime, financeItemId];
+            await dbContext.executeAsync(query, values);
+        } catch (ex) {
+            throw ex;
+        }
+    }
+
     async userIsOwnerFinanceItemAsync(financeItemId, userId) {
         try {
             if (typeof financeItemId != 'number' || typeof userId != 'number') throw new Error('Data for validate finance item owner is invalid');
