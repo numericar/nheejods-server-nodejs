@@ -2,6 +2,7 @@ const BaseResponseDto = require("../dtos/BaseResponseDto");
 const BaseController = require("./baseController");
 
 const financeBoxService = require('../services/financeBoxService');
+const financeItemService = require('../services/financeItemService');
 const dateUtilService = require('../utils/dateUtilService');
 
 class FinanceBoxController extends BaseController {
@@ -53,19 +54,45 @@ class FinanceBoxController extends BaseController {
             const financeBox = await financeBoxService.findFinanceBoxByIdAsync(financeBoxId);
             if (typeof financeBox == 'undefined') return res.staus(400).json(new BaseResponseDto(false, 'Finance box not found', null));
 
+            // validate object appends
+            for (let i = 0; i < appends.length; i++) {
+                if (typeof appends[i].title == 'undefined' || typeof appends[i].amount == 'undefined' || typeof appends[i].type == 'undefined') {
+                    return res.status(400).json(new BaseResponseDto(false, 'Object is invalid', false));
+                }
+            }
+
+            // validate object updates
+            for (let i = 0; i < updates.length; i++) {
+                if (typeof removes[i].id == 'undefined' || typeof updates[i].title == 'undefined' || typeof updates[i].amount == 'undefined' || typeof updates[i].type == 'undefined') {
+                    return res.status(400).json(new BaseResponseDto(false, 'Object is invalid', false));
+                }
+            }
+
+            // removes object remove
+            for (let i = 0; i < removes.length; i++) {
+                if (typeof removes[i].id == 'undefined') {
+                    return res.status(400).json(new BaseResponseDto(false, 'Object is invalid', false));
+                }
+            }
+
             // appends
             for (let i = 0; i < appends.length; i++) {
-
+                await financeItemService.createFinanceItemAsync(financeBoxId, appends[index].title, appends[index].amount, appends[index].type);
             }
 
             // updates
             for (let i = 0; i < updates.length; i++) {
-                
+                // validate req user is owner of finance box
+                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
+
+                // update item
             }
 
             // removes
             for (let i = 0; i < removes.length; i++) {
-                
+                // validate req user is owner of finance box
+
+                // remove item
             }
 
             return res.status(200).json(new BaseResponseDto(true, 'Successful', null));

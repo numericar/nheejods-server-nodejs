@@ -16,6 +16,8 @@ function useAuthentication (req, res, next) {
 
         const payload = jwt.verify(token, secretKey);
 
+        console.log(payload)
+
         req.user = {
             userId: payload.id
         };
