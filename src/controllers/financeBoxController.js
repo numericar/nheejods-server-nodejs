@@ -95,6 +95,7 @@ class FinanceBoxController extends BaseController {
                 if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
 
                 // remove item
+                await financeItemService.removeFinanceItemByIdAsync(removes[i].id);
             }
 
             return res.status(200).json(new BaseResponseDto(true, 'Successful', null));
