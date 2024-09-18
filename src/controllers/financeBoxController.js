@@ -46,8 +46,12 @@ class FinanceBoxController extends BaseController {
             console.log(removes);
 
             // validate finance box is exists
+            const financeBoxIsExists = await financeBoxService.financeBoxIsExistsByFinanceBoxIdAsync(financeBoxId);
+            if (!financeBoxIsExists) return res.status(400).json(new BaseResponseDto(false, 'Finance box id is invalid', null)); 
 
             // validate request user is owner of finance box
+            const financeBox = await financeBoxService.findFinanceBoxByIdAsync(financeBoxId);
+            if (typeof financeBox == 'undefined') return res.staus(400).json(new BaseResponseDto(false, 'Finance box not found', null));
 
             // appends
             for (let i = 0; i < appends.length; i++) {

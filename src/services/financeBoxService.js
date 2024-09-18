@@ -29,6 +29,34 @@ class FinanceBoxService {
         }
     }
 
+    async financeBoxIsExistsByFinanceBoxIdAsync(financeBoxId) {
+        try {
+            if (typeof financeBoxId != 'number') throw new Error('Finance bos id is invalid type');
+
+            const query = 'SELECT fb.id FROM finance_boxs fb WHERE fb.id = ?';
+            const values = [financeBoxId];
+            const financeBox = (await dbContext.executeAsync(query, values))[0];
+
+            return (typeof financeBox != 'undefined' && financeBox != null);
+        } catch (ex) {
+            throw ex;
+        }
+    }
+
+    async findFinanceBoxByIdAsync(financeBoxId) {
+        try {
+            if (typeof financeBoxId != 'number') throw new Error('Finance box id type is invalid');
+
+            const query = 'SELECT * FROM finance_boxs fb WHERE fb.id = ?';
+            const values = [financeBoxId];
+            const financeBox = (await dbContext.executeAsync(query, values))[0];
+
+            return financeBox;
+        } catch (ex) {
+            throw ex;
+        }
+    }
+
     async findFinanceBoxByUserIdAndDateAsync(userId, startDateObject, endDateObject) {
         try {
             if (typeof userId != 'number' && typeof year != 'number' && typeof month != 'number') throw new Error('Data for create finance box is invalid');
