@@ -30,6 +30,18 @@ class FinanceItemService {
             throw ex;
         }
     }
+    
+    async removeFinanceItemByIdAsync(financeItemId) {
+        try {
+            if (typeof financeItemId != 'number') throw new Error('Data update finance item is invalid');
+
+            const query = 'DELETE FROM finance_items fi WHERE fi.id = ?';
+            const values = [financeItemId];
+            await dbContext.executeAsync(query, values);
+        } catch (ex) {
+            throw ex;
+        }
+    }
 
     async userIsOwnerFinanceItemAsync(financeItemId, userId) {
         try {
