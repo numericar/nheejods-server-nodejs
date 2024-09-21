@@ -40,11 +40,6 @@ class FinanceBoxController extends BaseController {
             const { financeBoxId } = req.params;
             const { userId } = req.user;
 
-            console.log(typeof financeBoxId);
-            console.log(appends);
-            console.log(updates);
-            console.log(removes);
-
             if (!Array.isArray(appends) || !Array.isArray(removes) || isNaN(financeBoxId.trim())) return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
 
             // validate finance box is exists
