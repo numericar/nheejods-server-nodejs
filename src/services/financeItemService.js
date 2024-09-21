@@ -1,6 +1,20 @@
 const dbContext = require('../configs/MySQLDbContext');
 
 class FinanceItemService {
+    async findByBoxIdAsync(boxId) {
+        try {
+            if (isNaN(boxId)) throw new Error('Finance box id type is invalid');
+
+            const query = 'SELECT * FROM finance_items fi WHERE fi.box_id = ?';
+            const values = [boxId];
+            const financeItems = await dbContext.executeAsync(query, values);
+
+            return financeItems;
+        } catch (ex) {
+            throw ex;
+        }
+    }
+
     async createFinanceItemAsync(financeBoxId, title, amount, type) {
         try {
             if (isNaN(financeBoxId.trim()) || typeof title != 'string' || typeof amount != 'number' || typeof type != 'number') throw new Error('Data create finance item is invalid');

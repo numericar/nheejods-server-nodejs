@@ -4,6 +4,7 @@ const BaseController = require("./baseController");
 const financeBoxService = require('../services/financeBoxService');
 const financeItemService = require('../services/financeItemService');
 const dateUtilService = require('../utils/dateUtilService');
+const ResponseFinanceBoxDto = require("../dtos/responses/ResponseFinanceBoxsDto");
 
 class FinanceBoxController extends BaseController {
     async createFinanceBox(req, res) {
@@ -128,9 +129,43 @@ class FinanceBoxController extends BaseController {
             if (startDateObject.year > endDateObject.year) return res.status(400).json(new BaseResponseDto(false, 'Start date sould less than end date', null));
 
             // get user finance box
-            const financeBoxs = await financeBoxService.findFinanceBoxByUserIdAndDateAsync(userId, startDateObject, endDateObject);
+            const rawFinanceBoxs = await financeBoxService.findFinanceBoxByUserIdAndDateAsync(userId, startDateObject, endDateObject);
+
+            const financeBoxs = [];
 
             // get finance summary
+            for (let i = 0; i < rawFinanceBoxs.length; i++) {
+                const financeBox = rawFinanceBoxs[i];
+
+                // get finance items by finance box id
+                const financeItems = await financeItemService.findByBoxIdAsync(financeBox.id);
+
+                let income = 0;
+                let expense = 0;
+
+                for (let itemIndex = 0; itemIndex < financeItems.length; itemIndex++) {
+                    const financeItem = financeItems[itemIndex];
+                    const currentItemAmount = Number(financeItem.amount);
+
+                    switch (financeItem.type) {
+                        case 1: 
+                            income += currentItemAmount;
+                            break;
+                        case 2:
+                            expense += currentItemAmount;
+                            break;
+                        default:
+                            throw new Error('Found type of finance item not support');
+                    }
+                }
+                
+                const tempMonth = (financeBox.month.toString().length <= 1) ? `0${financeBox.month}` : financeBox.month;
+                const title = `${financeBox.year}-${tempMonth}`;
+                const remaining = income - expense;
+                const expensePercent = (income > 0) ?  (expense / income) * 100 : expense;
+
+                financeBoxs.push(new ResponseFinanceBoxDto(title, income, expense, remaining, Number(expensePercent.toFixed(2))));
+            }
             
             // return information to client
             return res.status(200).json(new BaseResponseDto(true, 'Successful', financeBoxs));

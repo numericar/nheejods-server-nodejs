@@ -61,7 +61,7 @@ class FinanceBoxService {
         try {
             if (typeof userId != 'number' && typeof year != 'number' && typeof month != 'number') throw new Error('Data for create finance box is invalid');
 
-            const query = `SELECT fb.user_id, fb.year, fb.month FROM finance_boxs fb WHERE 
+            const query = `SELECT fb.id, fb.user_id, fb.year, fb.month FROM finance_boxs fb WHERE 
                            fb.user_id = ? AND 
                            fb.year >= ? AND 
                            fb.month >= ? AND
