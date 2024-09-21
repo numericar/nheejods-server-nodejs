@@ -64,7 +64,7 @@ class FinanceBoxController extends BaseController {
 
             // validate object updates
             for (let i = 0; i < updates.length; i++) {
-                if (typeof removes[i].id == 'undefined' || typeof updates[i].title == 'undefined' || typeof updates[i].amount == 'undefined') {
+                if (typeof updates[i].id == 'undefined' || typeof updates[i].title == 'undefined' || typeof updates[i].amount == 'undefined') {
                     return res.status(400).json(new BaseResponseDto(false, 'Object is invalid', false));
                 }
             }
@@ -84,7 +84,7 @@ class FinanceBoxController extends BaseController {
             // updates
             for (let i = 0; i < updates.length; i++) {
                 // validate req user is owner of finance box
-                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id, userId)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
+                if (!await financeItemService.userIsOwnerFinanceItemAsync(updates[i].id, userId)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${updates[i].id} can't updated, unautorize`));
 
                 // update item
                 await financeItemService.updateFinanceItemByIdAsync(updates[i].id, updates[i].title, updates[i].amount);
