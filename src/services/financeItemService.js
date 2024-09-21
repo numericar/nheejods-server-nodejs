@@ -3,7 +3,7 @@ const dbContext = require('../configs/MySQLDbContext');
 class FinanceItemService {
     async createFinanceItemAsync(financeBoxId, title, amount, type) {
         try {
-            if (typeof financeBoxId != 'number' || typeof title != 'string' || typeof amount != 'number' || typeof type != 'number') throw new Error('Data create finance item is invalid');
+            if (isNaN(financeBoxId.trim()) || typeof title != 'string' || typeof amount != 'number' || typeof type != 'number') throw new Error('Data create finance item is invalid');
 
             if (type < 1 || type > 2) throw new Error('Type should between 1 - 2');
 

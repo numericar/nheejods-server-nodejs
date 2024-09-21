@@ -31,7 +31,7 @@ class FinanceBoxService {
 
     async financeBoxIsExistsByFinanceBoxIdAsync(financeBoxId) {
         try {
-            if (typeof financeBoxId != 'number') throw new Error('Finance bos id is invalid type');
+            if (isNaN(financeBoxId.trim())) throw new Error('Finance box id is invalid type');
 
             const query = 'SELECT fb.id FROM finance_boxs fb WHERE fb.id = ?';
             const values = [financeBoxId];
@@ -45,7 +45,7 @@ class FinanceBoxService {
 
     async findFinanceBoxByIdAsync(financeBoxId) {
         try {
-            if (typeof financeBoxId != 'number') throw new Error('Finance box id type is invalid');
+            if (isNaN(financeBoxId.trim())) throw new Error('Finance box id type is invalid');
 
             const query = 'SELECT * FROM finance_boxs fb WHERE fb.id = ?';
             const values = [financeBoxId];

@@ -38,13 +38,14 @@ class FinanceBoxController extends BaseController {
         try {
             const { appends, updates, removes } = req.body;
             const { financeBoxId } = req.params;
+            const { userId } = req.user;
 
-            if (!Array.isArray(appends) || !Array.isArray(removes) || typeof financeBoxId != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
-
-            console.log(financeBoxId);
+            console.log(typeof financeBoxId);
             console.log(appends);
             console.log(updates);
             console.log(removes);
+
+            if (!Array.isArray(appends) || !Array.isArray(removes) || isNaN(financeBoxId.trim())) return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
 
             // validate finance box is exists
             const financeBoxIsExists = await financeBoxService.financeBoxIsExistsByFinanceBoxIdAsync(financeBoxId);
@@ -77,13 +78,13 @@ class FinanceBoxController extends BaseController {
 
             // appends
             for (let i = 0; i < appends.length; i++) {
-                await financeItemService.createFinanceItemAsync(financeBoxId, appends[index].title, appends[index].amount, appends[index].type);
+                await financeItemService.createFinanceItemAsync(financeBoxId, appends[i].title, appends[i].amount, appends[i].type);
             }
 
             // updates
             for (let i = 0; i < updates.length; i++) {
                 // validate req user is owner of finance box
-                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
+                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id, userId)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
 
                 // update item
                 await financeItemService.updateFinanceItemByIdAsync(updates[i].id, updates[i].title, updates[i].amount);
@@ -92,7 +93,7 @@ class FinanceBoxController extends BaseController {
             // removes
             for (let i = 0; i < removes.length; i++) {
                 // validate req user is owner of finance box
-                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
+                if (!await financeItemService.userIsOwnerFinanceItemAsync(removes[i].id, userId)) return res.status(400).json(new BaseResponseDto(false, `finance box id: ${removes[i].id} can't updated, unautorize`));
 
                 // remove item
                 await financeItemService.removeFinanceItemByIdAsync(removes[i].id);
