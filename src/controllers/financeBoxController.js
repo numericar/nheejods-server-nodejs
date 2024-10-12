@@ -165,7 +165,7 @@ class FinanceBoxController extends BaseController {
                 const remaining = income - expense;
                 const expensePercent = (income > 0) ?  (expense / income) * 100 : expense;
 
-                financeBoxs.push(new ResponseFinanceBoxsDto(title, income, expense, remaining, Number(expensePercent.toFixed(2))));
+                financeBoxs.push(new ResponseFinanceBoxsDto(financeBox.id, title, income, expense, remaining, Number(expensePercent.toFixed(2))));
             }
             
             // return information to client
