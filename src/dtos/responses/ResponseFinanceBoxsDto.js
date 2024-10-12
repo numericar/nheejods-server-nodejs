@@ -1,4 +1,4 @@
-class ResponseFinanceBoxDto {
+class ResponseFinanceBoxsDto {
 
     constructor (title, income, expense, remaining, expensePercent) {
         this.title = title;
@@ -10,4 +10,4 @@ class ResponseFinanceBoxDto {
 
 }
 
-module.exports = ResponseFinanceBoxDto;
+module.exports = ResponseFinanceBoxsDto;

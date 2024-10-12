@@ -4,7 +4,8 @@ const BaseController = require("./baseController");
 const financeBoxService = require('../services/financeBoxService');
 const financeItemService = require('../services/financeItemService');
 const dateUtilService = require('../utils/dateUtilService');
-const ResponseFinanceBoxDto = require("../dtos/responses/ResponseFinanceBoxsDto");
+const ResponseFinanceBoxsDto = require("../dtos/responses/ResponseFinanceBoxsDto");
+const ResponseFinanceBoxDto = require('../dtos/responses/ResponseFinanceBoxDto');
 
 class FinanceBoxController extends BaseController {
     async createFinanceBox(req, res) {
@@ -164,13 +165,66 @@ class FinanceBoxController extends BaseController {
                 const remaining = income - expense;
                 const expensePercent = (income > 0) ?  (expense / income) * 100 : expense;
 
-                financeBoxs.push(new ResponseFinanceBoxDto(title, income, expense, remaining, Number(expensePercent.toFixed(2))));
+                financeBoxs.push(new ResponseFinanceBoxsDto(title, income, expense, remaining, Number(expensePercent.toFixed(2))));
             }
             
             // return information to client
             return res.status(200).json(new BaseResponseDto(true, 'Successful', financeBoxs));
         } catch (ex) {
             console.log(ex.message);
+
+            return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
+        }
+    }
+
+    async getFinanceBoxById(req, res) {
+        try {
+            const { userId } = req.user;
+            const { financeBoxId } = req.params;
+
+            if (typeof financeBoxId != 'string' && typeof financeBoxId != 'number') return res.status(400).json(new BaseResponseDto(false, 'Finance box id is invalid', null));
+
+            const boxId = (typeof financeBoxId == 'string') ? Number(financeBoxId) : financeBoxId;
+
+            const isOwner = await financeBoxService.isOwnerAsync(boxId, userId);
+            if (!isOwner) return res.status(400).json(new BaseResponseDto(false, 'User unauthorize to get finance box', null)); 
+
+            const financeBox = await financeBoxService.fincByIdAsync(boxId);
+
+            if (financeBox == null || financeBox == undefined) return res.status(400).json(new BaseResponseDto(false, 'Finance Box not found', null));
+
+            const financeItems = await financeItemService.findByBoxIdAsync(boxId);
+
+            let income = 0;
+            let expense = 0;
+            const incomeItems = [];
+            const expenseItems = [];
+
+            for (let itemIndex = 0; itemIndex < financeItems.length; itemIndex++) {
+                const financeItem = financeItems[itemIndex];
+                const currentItemAmount = Number(financeItem.amount);
+
+                switch (financeItem.type) {
+                    case 1:
+                        income += currentItemAmount;
+                        incomeItems.push({...financeItem, amount: currentItemAmount});
+                        break;
+                    case 2:
+                        expense += currentItemAmount;
+                        expenseItems.push({...financeItem, amount: currentItemAmount});
+                        break;
+                    default:
+                        throw new Error('Found type of finance item not support');
+                }
+            }
+
+            const tempMonth = (financeBox.month.toString().length <= 1) ? `0${financeBox.month}` : financeBox.month;
+            const title = `${financeBox.year}-${tempMonth}`;
+            const remaining = income - expense;
+
+            return res.status(200).json(new BaseResponseDto(true, 'Successful', new ResponseFinanceBoxDto(title, income, expense, remaining, incomeItems, expenseItems)));
+        } catch (err) {
+            console.log(err.message)
 
             return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
         }

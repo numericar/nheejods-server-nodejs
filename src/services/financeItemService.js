@@ -5,7 +5,7 @@ class FinanceItemService {
         try {
             if (isNaN(boxId)) throw new Error('Finance box id type is invalid');
 
-            const query = 'SELECT * FROM finance_items fi WHERE fi.box_id = ?';
+            const query = 'SELECT fi.id, fi.title, fi.amount, fi.type, fi.created_at FROM nheejods_db.finance_items fi WHERE fi.box_id = ?';
             const values = [boxId];
             const financeItems = await dbContext.executeAsync(query, values);
 

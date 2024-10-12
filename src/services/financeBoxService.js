@@ -75,6 +75,34 @@ class FinanceBoxService {
             throw ex;
         }
     }
+
+    async fincByIdAsync(boxId) {
+        try {
+            if (typeof boxId != 'number' || boxId < 0) throw new Error('Box id is invalid');  
+
+            const query = `SELECT f.id, f.year, f.month FROM nheejods_db.finance_boxs f WHERE f.id = ?`;
+            const values = [boxId];
+            const financeBox = await dbContext.executeAsync(query, values);
+
+            return financeBox[0];
+        } catch (ex) {
+            throw ex;
+        }
+    }
+
+    async isOwnerAsync(boxId, userId) {
+        try {
+            if (typeof boxId != 'number' || boxId < 0) throw new Error('Box id is invalid');  
+
+            const query = `SELECT f.user_id AS boxUserId FROM nheejods_db.finance_boxs f WHERE f.id = ?`;
+            const values = [boxId];
+            const { boxUserId } = (await dbContext.executeAsync(query, values))[0];
+
+            return (boxUserId == userId);
+        } catch (ex) {
+            throw ex;
+        }
+    }
 }
 
 module.exports = new FinanceBoxService();
