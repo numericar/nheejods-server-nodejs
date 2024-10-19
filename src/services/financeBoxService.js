@@ -103,6 +103,18 @@ class FinanceBoxService {
             throw ex;
         }
     }
+
+    async removeBoxByIdAsync(boxId) {
+        try {
+            if (typeof boxId != 'number' || boxId < 0) throw new Error('Box id is invalid');  
+
+            const query = `DELETE FROM nheejods_db.finance_boxs fb WHERE fb.id = ?`;
+            const values = [boxId];
+            await dbContext.executeAsync(query, values);
+        } catch (ex) {
+            throw ex;
+        }
+    }
 }
 
 module.exports = new FinanceBoxService();

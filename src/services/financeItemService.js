@@ -72,6 +72,18 @@ class FinanceItemService {
             throw ex;
         }
     }
+
+    async removeByBoxIdAsync(boxId) {
+        try {
+            if (typeof boxId != 'number') throw new Error('Data update finance item is invalid');
+
+            const query = 'DELETE FROM finance_items fi WHERE fi.box_id = ?';
+            const values = [boxId];
+            await dbContext.executeAsync(query, values);
+        } catch (ex) {
+            throw ex;
+        }
+    }
 }
 
 module.exports = new FinanceItemService();

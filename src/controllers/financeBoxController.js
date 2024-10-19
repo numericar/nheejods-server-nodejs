@@ -229,6 +229,25 @@ class FinanceBoxController extends BaseController {
             return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
         }
     }
+
+    async removeBoxById(req, res) {
+        try {
+            const { userId } = req.user;
+            const { financeBoxId } = req.params;
+
+            const isOwner = await financeBoxService.isOwnerAsync(financeBoxId, userId);
+            if (!isOwner) return res.status(400).json(new BaseResponseDto(false, 'User unauthorize to remove finance box', null));
+
+            await financeBoxService.removeBoxByIdAsync(boxId);
+            await financeItemService.removeByBoxIdAsync(boxId);
+
+            return res.status(204).json(new BaseResponseDto(true, 'Successful', null));
+        } catch (err) { 
+            console.log(err.message);
+
+            return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
+        }
+    }
 }
 
 module.exports = new FinanceBoxController();
