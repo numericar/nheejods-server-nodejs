@@ -9,7 +9,9 @@ class FinanceBoxService {
 
             const query = 'INSERT INTO finance_boxs (user_id, year, month, created_at, updated_at) VALUES (?,?,?,?,?)';
             const values = [userId, year, month, currentDate, currentDate];
-            await dbContext.executeAsync(query, values);
+            const result = await dbContext.executeAsync(query, values);
+
+            return result.insertId;
         } catch (ex) {
             throw ex;
         }

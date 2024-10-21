@@ -17,7 +17,7 @@ class FinanceItemService {
 
     async createFinanceItemAsync(financeBoxId, title, amount, type) {
         try {
-            if (isNaN(financeBoxId.trim()) || typeof title != 'string' || typeof amount != 'number' || typeof type != 'number') throw new Error('Data create finance item is invalid');
+            if (typeof title != 'string' || typeof amount != 'number' || typeof type != 'number') throw new Error('Data create finance item is invalid');
 
             if (type < 1 || type > 2) throw new Error('Type should between 1 - 2');
 

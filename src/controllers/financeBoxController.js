@@ -11,29 +11,29 @@ class FinanceBoxController extends BaseController {
     async createFinanceBox(req, res) {
         try {
             const { year, month } = req.body;
-        const { userId } =  req.user;
+            const { userId } =  req.user;
 
-        if (typeof year != 'number' || typeof month != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
+            if (typeof year != 'number' || typeof month != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
 
-        // validate year should more than 1970
-        if (year < 1970) return res.status(400).json(new BaseResponseDto(false, 'Year should be more than 1970', null));
+            // validate year should more than 1970
+            if (year < 1970) return res.status(400).json(new BaseResponseDto(false, 'Year should be more than 1970', null));
 
-        // validate month should between 1 - 12
-        if (month < 1 || month > 12) return res.status(400).json(new BaseResponseDto(false, 'Month should be between 1 - 12', null));
+            // validate month should between 1 - 12
+            if (month < 1 || month > 12) return res.status(400).json(new BaseResponseDto(false, 'Month should be between 1 - 12', null));
 
-        // validate finance box is exists
-        const isExists = await financeBoxService.financeBoxIsExists(userId, year, month);
-        if (isExists) return res.status(500).json(new BaseResponseDto(false, 'Finance box aleady exists', null));
+            // validate finance box is exists
+            const isExists = await financeBoxService.financeBoxIsExists(userId, year, month);
+            if (isExists) return res.status(500).json(new BaseResponseDto(false, 'Finance box aleady exists', null));
 
-        // create finance box
-        await financeBoxService.createFinanceBoxAsync(userId, year, month);
+            // create finance box
+            await financeBoxService.createFinanceBoxAsync(userId, year, month);
 
-        return res.status(201).json(new BaseResponseDto(true, 'Successful', null));
-        } catch (ex) {
-            console.log(ex.message);
+            return res.status(201).json(new BaseResponseDto(true, 'Successful', null));
+            } catch (ex) {
+                console.log(ex.message);
 
-            return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
-        }
+                return res.status(400).json(new BaseResponseDto(false, 'Failed', null));
+            }
     }
 
     async updateFinanceItems(req, res) {
@@ -243,6 +243,47 @@ class FinanceBoxController extends BaseController {
 
             return res.status(204).json(new BaseResponseDto(true, 'Successful', null));
         } catch (err) { 
+            console.log(err.message);
+
+            return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
+        }
+    }
+
+    async copyFinanceBox(req, res) {
+        try {
+            const { userId } = req.user;
+            const { financeBoxId } = req.params;
+            const { year, month } = req.body;
+
+            const isOwner = await financeBoxService.isOwnerAsync(Number(financeBoxId), userId);
+            if (!isOwner) return res.status(400).json(new BaseResponseDto(false, 'User unauthorize to copy finance box', null));
+
+            if (typeof year != 'number' || typeof month != 'number') return res.status(400).json(new BaseResponseDto(false, 'Data is invalid', null));
+
+            // validate year should more than 1970
+            if (year < 1970) return res.status(400).json(new BaseResponseDto(false, 'Year should be more than 1970', null));
+
+            // validate month should between 1 - 12
+            if (month < 1 || month > 12) return res.status(400).json(new BaseResponseDto(false, 'Month should be between 1 - 12', null));
+
+            // validate finance box is exists
+            const isExists = await financeBoxService.financeBoxIsExists(userId, year, month);
+            if (isExists) return res.status(500).json(new BaseResponseDto(false, 'Finance box aleady exists', null));
+
+            // create finance box
+            const lastFinanceBoxId = await financeBoxService.createFinanceBoxAsync(userId, year, month);
+
+            // get item from copy
+            const financeItems = await financeItemService.findByBoxIdAsync(financeBoxId);
+
+            // create items  
+            for (let index = 0; index < financeItems.length; index++) {
+                const financeItem = financeItems[index];
+                await financeItemService.createFinanceItemAsync(lastFinanceBoxId, financeItem.title, Number(financeItem.amount), financeItem.type);
+            }
+
+            return res.status(500).json(new BaseResponseDto(false, 'Successful', lastFinanceBoxId));
+        } catch (err) {
             console.log(err.message);
 
             return res.status(500).json(new BaseResponseDto(false, 'Failed', null));
